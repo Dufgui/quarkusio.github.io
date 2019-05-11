@@ -1,0 +1,40 @@
+---
+layout: starter
+title: Quarkus - Starter
+permalink: /starter/
+---
+
+<p>Rightsize your Quarkus application in a few clicks</p>
+
+<div class="panel-heading">
+    <h3 class="panel-title">Instructions</h3>
+</div>
+<ol>
+    <li>Choose the extensions you need</li>
+    <li>Click on the Generate button to download the <i>demo.zip</i> file</li>
+    <li>Unzip the file in a directory of your choice</li>
+    <li>Run <code>mvn quarkus:run</code> in the unzipped directory</li>
+    <li>Enjoy !</li>
+</ol>
+<p/>
+<form name="form" class="grid-wrapper">
+    <input type="text" name="groupId" class="width-6-12" id="groupId" tabindex="1" placeholder="Group ID : com.example">
+    <input type="text" name="artifactId" class="width-6-12" id="artifactId" tabindex="2" placeholder="Artifact ID : demo">
+    
+    <select name="extensions" multiple class="width-12-12 extensions">
+        {% for item in site.data.extensions.categories %}
+        <option disabled>{{ item.category }}</option>
+        {% for extension in item.extensions %}
+        {% if extension.groupId %}
+        <option value="{{ extension.groupId }}:{{ extension.artifactId }}">{{ extension.name }}</option>
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+    </select>
+
+    <button role="button" class="width-6-12 btn btn-primary" name="generate-project" onclick="return generate()" tabindex="4">Generate Project</button>
+</form>
+
+<script type="text/javascript" src="{{ '/assets/javascript/FileSaver.min.js' | relative_url }}"></script>
+<script type="text/javascript" src="{{ '/assets/javascript/jszip.min.js' | relative_url }}"></script>
+<script type="text/javascript" src="{{ '/assets/javascript/generator.js' | relative_url }}"></script>

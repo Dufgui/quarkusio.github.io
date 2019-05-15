@@ -17,9 +17,11 @@ permalink: /starter/
     <li>Enjoy !</li>
 </ol>
 <p/>
-<form name="form" class="grid-wrapper">
-    <input type="text" name="groupId" class="width-6-12" id="groupId" tabindex="1" placeholder="Group ID : com.example">
-    <input type="text" name="artifactId" class="width-6-12" id="artifactId" tabindex="2" placeholder="Artifact ID : demo">
+<form id="form" class="grid-wrapper">
+    <input type="text" name="groupId" class="width-6-12" id="groupId" tabindex="1" placeholder="Group ID : org.acme.quarkus.sample">
+    <input type="text" name="artifactId" class="width-6-12" id="artifactId" tabindex="2" placeholder="Artifact ID : my-quarkus-project">
+    <input type="text" name="version" class="width-3-12" id="version" tabindex="3" placeholder="Version : 1.0-SNAPSHOT">
+    <input type="text" name="className" class="width-9-12" id="className" tabindex="4" placeholder="Class name : org.acme.quarkus.sample.HelloResource">
     
     <select name="extensions" multiple class="width-12-12 extensions">
         {% for item in site.data.extensions.categories %}

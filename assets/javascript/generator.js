@@ -1,3 +1,50 @@
+
+function getTemplate(ftl, zip, filename) {
+  var url = '/assets/templates/'+ftl
+  return new Promise(function (resolve, reject) {
+    const xhr = new XMLHttpRequest();
+    xhr.timeout = 2000;
+    xhr.onreadystatechange = function(e) {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          zip.file(filename, xhr.responseText);
+          resolve(xhr.responseText)
+        } else {
+          reject(xhr.status)
+        }
+      }
+    }
+    xhr.ontimeout = function () {
+      reject('timeout')
+    }
+    xhr.open('get', url, true)
+    xhr.send();
+  })
+}
+
+function zipPromise(zip, zipname) {
+  return new Promise(function (resolve, reject) {
+    var handleProgress = function(metadata) {
+      console.log("progression: " + metadata.percent.toFixed(2) + " %");
+      if(metadata.currentFile) {
+          console.log("current file = " + metadata.currentFile);
+      }
+    }
+
+    var promise;
+    promise = zip.generateAsync({type : "blob"}, handleProgress);
+    var handleSuccess = function(zipcontent) {
+      console.log("project zipped");
+      saveAs(zipcontent, zipname);
+    }
+
+    promise.then(handleSuccess).catch(reject);
+    return resolve(promise);
+  });
+}
+
+
+
 function generate() {
   var groupId = $('#form').find('input[name="groupId"]').val();
   var artifactId = $('#form').find('input[name="artifactId"]').val();
@@ -30,33 +77,17 @@ function generate() {
       return false;
     }
 
-    zip.file("idlist.txt", 'PMID:29651880\nPMID:29303721');
-    
-    var handleProgress = function(metadata) {
-      console.log("progression: " + metadata.percent.toFixed(2) + " %");
-      if(metadata.currentFile) {
-          console.log("current file = " + metadata.currentFile);
-      }
-    }
-
-    var handleSuccess = function(content) {
-      console.log("project zipped");
-      saveAs(new Blob(content, {type: "application/zip"}), "download.zip");
-    }
-
     var handleError = function(err) {
       console.log("error while zipping project");
       console.log(err);
     }
 
-    var promise;
-    if (JSZip.support.uint8array) {
-      promise = zip.generateAsync({type : "uint8array"}, handleProgress);
-    } else {
-      promise = zip.generateAsync({type : "string"}, handleProgress);
-    }
+    getTemplate("gitignore.ftl", zip, ".gitignore")
+      .then(result => getTemplate("dockerignore.ftl", zip, ".dockerignore"))
+      .then(result => zipPromise(zip, artifactId+".zip"))
+      .catch(handleError);
 
-    promise.then(handleSuccess).catch(handleError);
+      
   } catch(error) {
     handleError(err);
   }
